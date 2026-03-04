@@ -1,9 +1,3 @@
-variable "resource_group_name" { type = string }
-variable "prefix" { type = string }
-variable "location" { type = string }
-variable "tags" { type = map(string) }
-variable "custom_domain" { type = string }
-
 locals {
   sa_name = lower("st${var.prefix}static")
   cdn_profile_name = "cdn-${var.prefix}-profile"
