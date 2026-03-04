@@ -18,13 +18,13 @@ module "static_site" {
   custom_domain       = var.custom_domain
 }
 
-module "cosmos" {
-  source              = "./modules/cosmos"
-  resource_group_name = azurerm_resource_group.rg.name
-  prefix              = local.prefix
-  location            = var.location
-  tags                = var.tags
-}
+# module "cosmos" {
+#   source              = "./modules/cosmos"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   prefix              = local.prefix
+#   location            = var.location
+#   tags                = var.tags
+# }
 
 module "function" {
   source                       = "./modules/function"
