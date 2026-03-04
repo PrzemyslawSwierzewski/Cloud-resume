@@ -17,7 +17,7 @@ resource "azurerm_storage_account" "static" {
   }
 }
 
-resource "azurerm_storage_container" "static" {
+data "azurerm_storage_container" "static" {
   name                  = "$web"
   storage_account_name  = azurerm_storage_account.static.name
 }
