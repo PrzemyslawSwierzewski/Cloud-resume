@@ -31,11 +31,9 @@ resource "azurerm_linux_function_app" "function" {
   storage_account_access_key = azurerm_storage_account.function_sa.primary_access_key
 
   site_config {
-    # linux_fx_version and scm_type are managed automatically by the provider
-    # when using azurerm_linux_function_app; specifying them causes errors.
-    application_stack = {
-      python_version = "3.14.0"
-  }
+    application_stack {
+      python_version = "3.14"
+    }
   }
 
   identity {
