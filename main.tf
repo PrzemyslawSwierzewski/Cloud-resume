@@ -36,12 +36,12 @@ module "function" {
   cosmos_account_name          = module.cosmos.account_name
 }
 
-module "dns" {
-  source                = "./modules/dns"
-  resource_group_name   = azurerm_resource_group.rg.name
-  prefix                = local.prefix
-  location              = var.location
-  tags                  = var.tags
-  custom_domain         = var.custom_domain
-  cdn_endpoint_hostname = module.static_site.cdn_endpoint_hostname
-}
+# module "dns" {
+#   source                = "./modules/dns"
+#   resource_group_name   = azurerm_resource_group.rg.name
+#   prefix                = local.prefix
+#   location              = var.location
+#   tags                  = var.tags
+#   custom_domain         = var.custom_domain
+#   cdn_endpoint_hostname = module.static_site.cdn_endpoint_hostname
+# }

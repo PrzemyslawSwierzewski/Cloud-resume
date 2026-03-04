@@ -19,43 +19,43 @@ resource "azurerm_storage_account" "static" {
   }
 }
 
-resource "azurerm_cdn_profile" "profile" {
-  name                = local.cdn_profile_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  sku                 = "Standard_Microsoft"
-}
+# resource "azurerm_cdn_profile" "profile" {
+#   name                = local.cdn_profile_name
+#   location            = var.location
+#   resource_group_name = var.resource_group_name
+#   sku                 = "Standard_Microsoft"
+# }
 
-resource "azurerm_cdn_endpoint" "endpoint" {
-  name                = local.cdn_endpoint_name
-  profile_name        = azurerm_cdn_profile.profile.name
-  location            = var.location
-  resource_group_name = var.resource_group_name
+# resource "azurerm_cdn_endpoint" "endpoint" {
+#   name                = local.cdn_endpoint_name
+#   profile_name        = azurerm_cdn_profile.profile.name
+#   location            = var.location
+#   resource_group_name = var.resource_group_name
 
-  origin {
-    name      = "storage-origin"
-    host_name = trim(replace(replace(azurerm_storage_account.static.primary_web_endpoint, "https://", ""), "http://", ""), "/")
-  }
+#   origin {
+#     name      = "storage-origin"
+#     host_name = trim(replace(replace(azurerm_storage_account.static.primary_web_endpoint, "https://", ""), "http://", ""), "/")
+#   }
 
-  is_http_allowed  = false
-  is_https_allowed = true
-  # no geo_filter by default
-}
+#   is_http_allowed  = false
+#   is_https_allowed = true
+#   # no geo_filter by default
+# }
 
 # Note: creating a `azurerm_cdn_custom_domain` requires domain validation steps
 # which often need owners to add TXT records or CNAMEs to their DNS provider.
 # We create a dns CNAME mapping in the `dns` module and leave the custom domain
 # resource instantiation to operators after validation in many environments.
 
-output "primary_web_endpoint" {
-  value = azurerm_storage_account.static.primary_web_endpoint
-}
+# output "primary_web_endpoint" {
+#   value = azurerm_storage_account.static.primary_web_endpoint
+# }
 
-output "cdn_endpoint_hostname" {
-  value = [for o in azurerm_cdn_endpoint.endpoint.origin : o.host_name][0]
-}
+# output "cdn_endpoint_hostname" {
+#   value = [for o in azurerm_cdn_endpoint.endpoint.origin : o.host_name][0]
+# }
 
-# Expose a storage account name for function use (short-lived credentials not stored here)
-output "function_storage_account_name" {
-  value = azurerm_storage_account.static.name
-}
+# # Expose a storage account name for function use (short-lived credentials not stored here)
+# output "function_storage_account_name" {
+#   value = azurerm_storage_account.static.name
+# }
