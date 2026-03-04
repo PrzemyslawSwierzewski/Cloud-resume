@@ -9,9 +9,9 @@ terraform apply plan.tfplan
 ```
 
 This workspace contains modules:
-- `static_site` — Storage account (static website) + CDN endpoint
+- `static_site` — Storage account (static website)
 - `cosmos` — CosmosDB Table API (serverless)
 - `function` — Azure Function (Python) with deployment placeholder
-- `dns` — DNS zone and records for the custom domain
+\n+The deployment uses the storage account primary web endpoint for public hosting; DNS/custom domain automation has been removed from this example.
 
 Fill `terraform.tfvars` or pass variables at runtime.

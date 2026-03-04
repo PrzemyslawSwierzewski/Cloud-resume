@@ -1,6 +1,6 @@
-output "front_door_endpoint_hostname" {
-  description = "Azure Front Door endpoint hostname (recommended CDN replacement)"
-  value       = module.static_site.front_door_endpoint_hostname
+output "static_website_primary_endpoint" {
+  description = "Public URL of the static website (storage account)"
+  value       = module.static_site.primary_web_endpoint
 }
 
 output "function_default_hostname" {

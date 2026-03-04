@@ -35,13 +35,3 @@ module "function" {
   storage_account_for_function = module.static_site.function_storage_account_name
   cosmos_account_name          = module.cosmos.account_name
 }
-
-module "dns" {
-  source                       = "./modules/dns"
-  resource_group_name          = azurerm_resource_group.rg.name
-  prefix                       = local.prefix
-  location                     = var.location
-  tags                         = var.tags
-  custom_domain                = var.custom_domain
-  front_door_endpoint_hostname = module.static_site.front_door_endpoint_hostname
-}
