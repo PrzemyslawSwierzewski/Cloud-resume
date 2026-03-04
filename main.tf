@@ -33,5 +33,5 @@ module "function" {
   location                     = var.location
   tags                         = var.tags
   storage_account_for_function = module.static_site.function_storage_account_name
-  cosmos_account_name          = module.cosmos.account_name
+  #cosmos_account_name          = module.cosmos.account_name
 }

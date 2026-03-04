@@ -8,7 +8,7 @@ output "function_default_hostname" {
   value       = module.function.function_default_hostname
 }
 
-output "cosmos_account_name" {
-  description = "CosmosDB account name"
-  value       = module.cosmos.account_name
-}
+# output "cosmos_account_name" {
+#   description = "CosmosDB account name"
+#   value       = module.cosmos.account_name
+# }

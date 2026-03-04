@@ -19,7 +19,6 @@ resource "azurerm_storage_account" "static" {
 
 resource "azurerm_storage_container" "static" {
   name                  = "$web"
-  resource_group_name   = azurerm_resource_group.static.name
   storage_account_name  = azurerm_storage_account.static.name
 }
 
