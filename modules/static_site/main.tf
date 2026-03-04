@@ -1,5 +1,5 @@
 locals {
-  sa_name                = lower("st${var.prefix}static")
+  sa_name = lower("st${var.prefix}static")
 }
 
 resource "azurerm_storage_account" "static" {
@@ -15,6 +15,20 @@ resource "azurerm_storage_account" "static" {
     index_document     = "index.html"
     error_404_document = "404.html"
   }
+}
+
+resource "azurerm_storage_container" "static" {
+  name                  = "$web"
+  resource_group_name   = azurerm_resource_group.static.name
+  storage_account_name  = azurerm_storage_account.static.name
+}
+
+resource "azurerm_storage_blob" "index" {
+  name                   = "index.html"
+  storage_account_name   = azurerm_storage_account.static.name
+  storage_container_name = azurerm_storage_container.static.name
+  type                   = "Block"
+  source                 = "static-website-resume\Index.html"
 }
 
 # Expose the storage account primary web endpoint for direct public hosting

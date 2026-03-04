@@ -29,6 +29,9 @@ resource "azurerm_linux_function_app" "function" {
   service_plan_id            = azurerm_service_plan.plan.id
   storage_account_name       = azurerm_storage_account.function_sa.name
   storage_account_access_key = azurerm_storage_account.function_sa.primary_access_key
+  application_stack = {
+    python_version = "3.14.0"
+  }
 
   site_config {
     # linux_fx_version and scm_type are managed automatically by the provider
