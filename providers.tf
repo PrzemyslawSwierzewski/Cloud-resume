@@ -1,10 +1,4 @@
 terraform {
-  required_providers {
-    azapi = {
-      source = "azure/azapi"
-    }
-  }
-
   backend "azurerm" {
     resource_group_name  = "stateaccresume"
     storage_account_name = "stateaccresume"
@@ -13,5 +7,6 @@ terraform {
   }
 }
 
-provider "azapi" {
+provider "azurerm" {
+  features {}
 }
