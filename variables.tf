@@ -13,7 +13,7 @@ variable "location" {
 variable "tags" {
   description = "Map of tags to apply to resources"
   type        = map(string)
-  default     = { Environment = "dev" ManagedBy = "Terraform" Project = "static-site-poc" }
+  default     = { Environment = "dev", ManagedBy = "Terraform", Project = "static-site-poc" }
 }
 
 variable "custom_domain" {
