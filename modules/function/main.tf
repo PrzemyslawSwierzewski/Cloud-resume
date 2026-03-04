@@ -30,6 +30,11 @@ resource "azurerm_linux_function_app" "function" {
   storage_account_name       = azurerm_storage_account.function_sa.name
   storage_account_access_key = azurerm_storage_account.function_sa.primary_access_key
 
+  site_config {
+    # linux_fx_version and scm_type are managed automatically by the provider
+    # when using azurerm_linux_function_app; specifying them causes errors.
+  }
+
   identity {
     type = "SystemAssigned"
   }

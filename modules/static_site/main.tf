@@ -1,6 +1,6 @@
 locals {
-  sa_name                = lower("st${var.prefix}static")
-  front_door_profile_name = "fd-${var.prefix}-profile"
+  sa_name                  = lower("st${var.prefix}static")
+  front_door_profile_name  = "fd-${var.prefix}-profile"
   front_door_endpoint_name = "fd-${var.prefix}-endpoint"
 }
 
@@ -38,26 +38,28 @@ resource "azurerm_cdn_frontdoor_origin_group" "origin_group" {
   }
 
   health_probe {
-    protocol             = "Http"
-    path                 = "/"
-    interval_in_seconds  = 120
+    protocol            = "Http"
+    path                = "/"
+    interval_in_seconds = 120
   }
 }
 
 resource "azurerm_cdn_frontdoor_origin" "storage" {
-  name                          = "storage-origin"
-  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.origin_group.id
-  enabled                       = true
-  host_name                     = trim(replace(replace(azurerm_storage_account.static.primary_web_endpoint, "https://", ""), "http://", ""), "/")
-  http_port                     = 80
-  https_port                    = 443
-  origin_host_header            = trim(replace(replace(azurerm_storage_account.static.primary_web_endpoint, "https://", ""), "http://", ""), "/")
+  name                           = "storage-origin"
+  cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.origin_group.id
+  certificate_name_check_enabled = false
+  enabled                        = true
+  host_name                      = trim(replace(replace(azurerm_storage_account.static.primary_web_endpoint, "https://", ""), "http://", ""), "/")
+  http_port                      = 80
+  https_port                     = 443
+  origin_host_header             = trim(replace(replace(azurerm_storage_account.static.primary_web_endpoint, "https://", ""), "http://", ""), "/")
   priority                       = 1
   weight                         = 1000
 }
 
 resource "azurerm_cdn_frontdoor_route" "route" {
   name                          = "${local.front_door_endpoint_name}-route"
+  cdn_frontdoor_origin_ids     = [azurerm_cdn_frontdoor_origin.storage.id]
   cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint.id
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.origin_group.id
   supported_protocols           = ["Http", "Https"]
