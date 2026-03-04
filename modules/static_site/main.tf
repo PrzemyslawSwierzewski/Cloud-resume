@@ -29,6 +29,7 @@ resource "azurerm_cdn_profile" "profile" {
 resource "azurerm_cdn_endpoint" "endpoint" {
   name                = local.cdn_endpoint_name
   profile_name        = azurerm_cdn_profile.profile.name
+  location            = var.location
   resource_group_name = var.resource_group_name
   origin {
     name      = "storage-origin"
