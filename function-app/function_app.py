@@ -1,46 +1,33 @@
 import azure.functions as func
 import logging
-import os
-import json
-from azure.identity import DefaultAzureCredential
-from azure.data.tables import TableClient
 
-app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
+app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 @app.route(route="http_trigger")
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    """Simple visitor counter using CosmosDB Table API (via Azure Tables SDK).
+    STORAGE_CONN_STRING = os.environ["STORAGE_CONN_STRING"]
+    TABLE_NAME = "VisitorCounter"
 
-    This function expects the Function App to run with a system-assigned
-    managed identity which has data-plane access to the Cosmos Table resource.
-    """
-    logging.info('HTTP trigger received a request.')
+    table_service = TableServiceClient.from_connection_string(STORAGE_CONN_STRING)
+    table_client = table_service.get_table_client(TABLE_NAME)
 
-    table_name = os.environ.get('TABLE_NAME', 'visitors')
-    account_url = os.environ.get('TABLE_ACCOUNT_URL')
-    if not account_url:
-        return func.HttpResponse(json.dumps({"error": "TABLE_ACCOUNT_URL not set"}), status_code=500)
+    partition_key = "resume"
+    row_key = "views"
 
-    credential = DefaultAzureCredential()
-    client = TableClient(endpoint=account_url, table_name=table_name, credential=credential)
-
-    # Ensure table exists
+    # Try to fetch entity, create if not exists
     try:
-        client.create_table()
+        entity = table_client.get_entity(partition_key=partition_key, row_key=row_key)
+        count = entity.get("Count", 0)
+        entity["Count"] = count + 1
+        table_client.update_entity(entity, mode="Replace")
     except Exception:
-        pass
-
-    partition_key = "site"
-    row_key = "visitor_count"
-
-    try:
-        entity = client.get_entity(partition_key=partition_key, row_key=row_key)
-        count = int(entity.get('count', 0)) + 1
-        entity['count'] = count
-        client.update_entity(entity=entity, mode='Merge')
-    except Exception:
-        # First-time create
+        # First-time visitor
+        entity = {"PartitionKey": partition_key, "RowKey": row_key, "Count": 1}
+        table_client.create_entity(entity)
         count = 1
-        client.create_entity({'PartitionKey': partition_key, 'RowKey': row_key, 'count': count})
 
-    return func.HttpResponse(json.dumps({"visitor_count": count}), mimetype="application/json")
+    return func.HttpResponse(
+        json.dumps({"count": count}),
+        status_code=200,
+        mimetype="application/json"
+    )

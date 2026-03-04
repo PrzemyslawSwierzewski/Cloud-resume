@@ -3,17 +3,6 @@ locals {
   app_service_plan_name = "asp-${var.prefix}"
 }
 
-# Storage account for function app's runtime (if not provided, module expects one)
-resource "azurerm_storage_account" "function_sa" {
-  name                     = substr("stfn${var.prefix}", 0, 24)
-  resource_group_name      = var.resource_group_name
-  location                 = var.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  min_tls_version          = "TLS1_2"
-  tags                     = var.tags
-}
-
 resource "azurerm_service_plan" "plan" {
   name                = local.app_service_plan_name
   location            = var.location
@@ -27,13 +16,17 @@ resource "azurerm_linux_function_app" "function" {
   resource_group_name        = var.resource_group_name
   location                   = var.location
   service_plan_id            = azurerm_service_plan.plan.id
-  storage_account_name       = azurerm_storage_account.function_sa.name
-  storage_account_access_key = azurerm_storage_account.function_sa.primary_access_key
+  storage_account_name       = var.storage_account_name
+  storage_account_access_key = var.storage_account_name_primary_connection_string
 
   site_config {
     application_stack {
       python_version = "3.12"
     }
+  }
+
+  app_settings = {
+    "STORAGE_CONN_STRING" = var.storage_account_name_primary_connection_string
   }
 
   identity {

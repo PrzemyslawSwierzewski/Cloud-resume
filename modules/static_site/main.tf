@@ -31,6 +31,11 @@ resource "azurerm_storage_blob" "index" {
   content_type           = "text/html"
 }
 
+resource "azurerm_storage_table" "visitors" {
+  name                 = "visitors"
+  storage_account_name = azurerm_storage_account.static.name
+}
+
 # Expose the storage account primary web endpoint for direct public hosting
 output "primary_web_endpoint" {
   value = azurerm_storage_account.static.primary_web_endpoint
@@ -39,4 +44,8 @@ output "primary_web_endpoint" {
 # Expose a storage account name for function use (short-lived credentials not stored here)
 output "function_storage_account_name" {
   value = azurerm_storage_account.static.name
+}
+
+output "storage_account_name_primary_connection_string" {
+  value = azurerm_storage_account.static.primary_connection_string
 }

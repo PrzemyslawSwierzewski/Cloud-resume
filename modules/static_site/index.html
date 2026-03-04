@@ -259,21 +259,29 @@
         canvas.height = window.innerHeight;
     });
 
-    // Simple visitor counter (local simulation)
-    function incrementCounter() {
-        let count = localStorage.getItem('visitorCount');
-        if (!count) count = 0;
-        count++;
-        localStorage.setItem('visitorCount', count);
-        document.getElementById('counter').innerText = count;
+    // Visitor counter using your Azure Function
+    async function fetchVisitorCount() {
+        const counterElement = document.getElementById('counter');
+
+        try {
+            const response = await fetch("https://func-res.azurewebsites.net/api/http_trigger");
+            
+            if (!response.ok) {
+                throw new Error("HTTP error " + response.status);
+            }
+
+            const data = await response.json();
+            
+            // Update the counter in the HTML
+            counterElement.innerText = data.visitor_count ?? "0";
+        } catch (error) {
+            console.error("Error fetching visitor count:", error);
+            counterElement.innerText = "Error";
+        }
     }
 
-    window.onload = function() {
-        let count = localStorage.getItem('visitorCount');
-        if (!count) count = 1;
-        localStorage.setItem('visitorCount', count);
-        document.getElementById('counter').innerText = count;
-    }
+    // Call the function on page load
+    window.onload = fetchVisitorCount;
 </script>
 
 </body>

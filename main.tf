@@ -19,10 +19,11 @@ module "static_site" {
 }
 
 module "function" {
-  source                       = "./modules/function"
-  resource_group_name          = azurerm_resource_group.rg.name
-  prefix                       = local.prefix
-  location                     = var.location
-  tags                         = var.tags
-  storage_account_for_function = module.static_site.function_storage_account_name
+  source                                         = "./modules/function"
+  resource_group_name                            = azurerm_resource_group.rg.name
+  prefix                                         = local.prefix
+  location                                       = var.location
+  tags                                           = var.tags
+  storage_account_name_primary_connection_string = module.static_site.storage_account_name_primary_connection_string
+  storage_account_name                           = module.static_site.function_storage_account_name
 }
