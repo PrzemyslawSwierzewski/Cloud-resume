@@ -30,11 +30,6 @@ resource "azurerm_linux_function_app" "function" {
   storage_account_name       = azurerm_storage_account.function_sa.name
   storage_account_access_key = azurerm_storage_account.function_sa.primary_access_key
 
-  site_config {
-    linux_fx_version = "Python|3.11"
-    scm_type         = "LocalGit"
-  }
-
   identity {
     type = "SystemAssigned"
   }

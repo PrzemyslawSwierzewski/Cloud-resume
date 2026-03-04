@@ -1,6 +1,6 @@
 locals {
-  sa_name                  = lower("st${var.prefix}static")
-  front_door_profile_name  = "fd-${var.prefix}-profile"
+  sa_name                = lower("st${var.prefix}static")
+  front_door_profile_name = "fd-${var.prefix}-profile"
   front_door_endpoint_name = "fd-${var.prefix}-endpoint"
 }
 
@@ -38,10 +38,9 @@ resource "azurerm_cdn_frontdoor_origin_group" "origin_group" {
   }
 
   health_probe {
-    probe_path          = "/"
-    probe_request_type  = "GET"
-    probe_protocol      = "Http"
-    interval_in_seconds = 120
+    protocol             = "Http"
+    path                 = "/"
+    interval_in_seconds  = 120
   }
 }
 
@@ -53,8 +52,8 @@ resource "azurerm_cdn_frontdoor_origin" "storage" {
   http_port                     = 80
   https_port                    = 443
   origin_host_header            = trim(replace(replace(azurerm_storage_account.static.primary_web_endpoint, "https://", ""), "http://", ""), "/")
-  priority                      = 1
-  weight                        = 1000
+  priority                       = 1
+  weight                         = 1000
 }
 
 resource "azurerm_cdn_frontdoor_route" "route" {
