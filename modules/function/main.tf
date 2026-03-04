@@ -1,5 +1,5 @@
 locals {
-  function_app_name = "func-${var.prefix}"
+  function_app_name     = "func-${var.prefix}"
   app_service_plan_name = "asp-${var.prefix}"
 }
 

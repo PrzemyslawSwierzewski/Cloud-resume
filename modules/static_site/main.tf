@@ -1,7 +1,7 @@
 locals {
-  sa_name = lower("st${var.prefix}static")
-  cdn_profile_name = "cdn-${var.prefix}-profile"
-  cdn_endpoint_name  = "cdn-${var.prefix}-endpoint"
+  sa_name           = lower("st${var.prefix}static")
+  cdn_profile_name  = "cdn-${var.prefix}-profile"
+  cdn_endpoint_name = "cdn-${var.prefix}-endpoint"
 }
 
 resource "azurerm_storage_account" "static" {
@@ -15,7 +15,7 @@ resource "azurerm_storage_account" "static" {
   tags                     = var.tags
 
   static_website {
-    index_document = "index.html"
+    index_document     = "index.html"
     error_404_document = "404.html"
   }
 }
