@@ -31,10 +31,12 @@ resource "azurerm_cdn_endpoint" "endpoint" {
   profile_name        = azurerm_cdn_profile.profile.name
   location            = var.location
   resource_group_name = var.resource_group_name
+
   origin {
     name      = "storage-origin"
-    host_name = regexreplace(regexreplace(azurerm_storage_account.static.primary_web_endpoint, "^https?://", ""), "/*$", "")
+    host_name = trim(replace(replace(azurerm_storage_account.static.primary_web_endpoint, "https://", ""), "http://", ""), "/")
   }
+
   is_http_allowed  = false
   is_https_allowed = true
   # no geo_filter by default
