@@ -27,7 +27,7 @@ resource "azurerm_storage_blob" "index" {
   storage_account_name   = azurerm_storage_account.static.name
   storage_container_name = data.azurerm_storage_container.static.name
   type                   = "Block"
-  source                 = "static-website-resume/index.html"
+  source                 = "../../static-website-resume/index.html"
 }
 
 # Expose the storage account primary web endpoint for direct public hosting
