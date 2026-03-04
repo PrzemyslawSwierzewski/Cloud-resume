@@ -37,11 +37,11 @@ module "function" {
 }
 
 module "dns" {
-  source                       = "./modules/dns"
-  resource_group_name          = azurerm_resource_group.rg.name
-  prefix                       = local.prefix
-  location                     = var.location
-  tags                         = var.tags
-  custom_domain                = var.custom_domain
+  source                    = "./modules/dns"
+  resource_group_name       = azurerm_resource_group.rg.name
+  prefix                    = local.prefix
+  location                  = var.location
+  tags                      = var.tags
+  custom_domain             = var.custom_domain
   front_door_endpoint_hostname = module.static_site.front_door_endpoint_hostname
 }

@@ -1,6 +1,6 @@
 locals {
-  sa_name                  = lower("st${var.prefix}static")
-  front_door_profile_name  = "fd-${var.prefix}-profile"
+  sa_name                = lower("st${var.prefix}static")
+  front_door_profile_name = "fd-${var.prefix}-profile"
   front_door_endpoint_name = "fd-${var.prefix}-endpoint"
 }
 
@@ -30,10 +30,18 @@ resource "azurerm_cdn_frontdoor_origin_group" "origin_group" {
   name                     = "${local.front_door_endpoint_name}-og"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.profile.id
   session_affinity_enabled = false
-  load_balancing_settings {
+
+  load_balancing {
     additional_latency_in_milliseconds = 0
     sample_size                        = 16
     successful_samples_required        = 3
+  }
+
+  health_probe {
+    probe_path         = "/"
+    probe_request_type = "GET"
+    probe_protocol     = "Http"
+    interval_in_seconds = 120
   }
 }
 
@@ -45,8 +53,8 @@ resource "azurerm_cdn_frontdoor_origin" "storage" {
   http_port                     = 80
   https_port                    = 443
   origin_host_header            = trim(replace(replace(azurerm_storage_account.static.primary_web_endpoint, "https://", ""), "http://", ""), "/")
-  priority                      = 1
-  weight                        = 1000
+  priority                       = 1
+  weight                         = 1000
 }
 
 resource "azurerm_cdn_frontdoor_route" "route" {
@@ -68,6 +76,14 @@ resource "azurerm_cdn_frontdoor_endpoint" "endpoint" {
 # Note: For custom domains, create `azurerm_cdn_frontdoor_custom_domain` resource
 # and reference it in the route. This requires domain validation via TXT records
 # or CNAME delegation. DNS CNAME mapping is created in the `dns` module.
+
+# output "primary_web_endpoint" {
+#   value = azurerm_storage_account.static.primary_web_endpoint
+# }
+
+# output "cdn_endpoint_hostname" {
+#   value = [for o in azurerm_cdn_endpoint.endpoint.origin : o.host_name][0]
+# }
 
 # Expose Front Door endpoint hostname
 output "front_door_endpoint_hostname" {

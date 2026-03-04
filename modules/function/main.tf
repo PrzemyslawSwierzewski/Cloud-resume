@@ -22,11 +22,11 @@ resource "azurerm_service_plan" "plan" {
   sku_name            = "Y1"
 }
 
-resource "azurerm_function_app" "function" {
+resource "azurerm_linux_function_app" "function" {
   name                       = local.function_app_name
   resource_group_name        = var.resource_group_name
   location                   = var.location
-  app_service_plan_id        = azurerm_service_plan.plan.id
+  service_plan_id            = azurerm_service_plan.plan.id
   storage_account_name       = azurerm_storage_account.function_sa.name
   storage_account_access_key = azurerm_storage_account.function_sa.primary_access_key
 
@@ -43,5 +43,5 @@ resource "azurerm_function_app" "function" {
 }
 
 output "function_default_hostname" {
-  value = azurerm_function_app.function.default_hostname
+  value = azurerm_linux_function_app.function.default_hostname
 }
