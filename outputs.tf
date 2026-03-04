@@ -12,3 +12,7 @@ output "function_default_hostname" {
 #   description = "CosmosDB account name"
 #   value       = module.cosmos.account_name
 # }
+
+output "debug_root_path" {
+  value = path.root
+}
