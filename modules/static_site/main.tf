@@ -52,7 +52,7 @@ output "primary_web_endpoint" {
 }
 
 output "cdn_endpoint_hostname" {
-  value = azurerm_cdn_endpoint.endpoint.host_name
+  value = azurerm_cdn_endpoint.endpoint.origin[0].host_name
 }
 
 # Expose a storage account name for function use (short-lived credentials not stored here)
