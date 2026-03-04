@@ -1,7 +1,6 @@
 locals {
   sa_name                = lower("st${var.prefix}static")
 }
-}
 
 resource "azurerm_storage_account" "static" {
   name                     = substr(local.sa_name, 0, 24)
