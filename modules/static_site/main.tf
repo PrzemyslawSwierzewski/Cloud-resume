@@ -18,8 +18,8 @@ resource "azurerm_storage_account" "static" {
 }
 
 data "azurerm_storage_container" "static" {
-  name                  = "$web"
-  storage_account_name  = azurerm_storage_account.static.name
+  name                 = "$web"
+  storage_account_name = azurerm_storage_account.static.name
 }
 
 resource "azurerm_storage_blob" "index" {
@@ -28,6 +28,7 @@ resource "azurerm_storage_blob" "index" {
   storage_container_name = data.azurerm_storage_container.static.name
   type                   = "Block"
   source                 = "${path.module}/index.html"
+  content_type           = "text/html"
 }
 
 # Expose the storage account primary web endpoint for direct public hosting
