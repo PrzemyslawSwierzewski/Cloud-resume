@@ -7,7 +7,7 @@ variable "project_prefix" {
 variable "location" {
   description = "Azure region"
   type        = string
-  default     = "westeurope"
+  default     = "polandcentral"
 }
 
 variable "tags" {
