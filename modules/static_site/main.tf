@@ -55,7 +55,7 @@ resource "azurerm_storage_account" "static" {
 #   value = [for o in azurerm_cdn_endpoint.endpoint.origin : o.host_name][0]
 # }
 
-# # Expose a storage account name for function use (short-lived credentials not stored here)
-# output "function_storage_account_name" {
-#   value = azurerm_storage_account.static.name
-# }
+# Expose a storage account name for function use (short-lived credentials not stored here)
+output "function_storage_account_name" {
+  value = azurerm_storage_account.static.name
+}
