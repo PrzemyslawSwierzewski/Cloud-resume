@@ -12,5 +12,5 @@ provider "azurerm" {
 
   # Avoid deprecation warning about `skip_provider_registration` in v4.x
   # AzureRM v5 will require explicit registration blocks, so provide empty list.
-  resource_provider_registrations = []
+  resource_provider_registrations = "none"
 }
