@@ -17,7 +17,7 @@ variable "tags" {
 }
 
 variable "custom_domain" {
-  description = "(Optional) Custom domain to map to CDN endpoint (example: www.example.com)"
+  description = "(Optional) Custom domain to map to Front Door endpoint (example: www.example.com)"
   type        = string
   default     = ""
 }

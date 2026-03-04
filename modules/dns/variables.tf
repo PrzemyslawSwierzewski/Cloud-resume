@@ -3,4 +3,4 @@ variable "prefix" { type = string }
 variable "location" { type = string }
 variable "tags" { type = map(string) }
 variable "custom_domain" { type = string }
-variable "cdn_endpoint_hostname" { type = string }
+variable "front_door_endpoint_hostname" { type = string }

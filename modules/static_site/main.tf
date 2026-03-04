@@ -1,7 +1,7 @@
 locals {
-  sa_name           = lower("st${var.prefix}static")
-  cdn_profile_name  = "cdn-${var.prefix}-profile"
-  cdn_endpoint_name = "cdn-${var.prefix}-endpoint"
+  sa_name                  = lower("st${var.prefix}static")
+  front_door_profile_name  = "fd-${var.prefix}-profile"
+  front_door_endpoint_name = "fd-${var.prefix}-endpoint"
 }
 
 resource "azurerm_storage_account" "static" {
@@ -19,41 +19,60 @@ resource "azurerm_storage_account" "static" {
   }
 }
 
-# resource "azurerm_cdn_profile" "profile" {
-#   name                = local.cdn_profile_name
-#   location            = var.location
-#   resource_group_name = var.resource_group_name
-#   sku                 = "Standard_Microsoft"
-# }
+# Azure Front Door (recommended replacement for deprecated CDN)
+resource "azurerm_cdn_frontdoor_profile" "profile" {
+  name                = local.front_door_profile_name
+  resource_group_name = var.resource_group_name
+  sku_name            = "Standard_AzureFrontDoor"
+}
 
-# resource "azurerm_cdn_endpoint" "endpoint" {
-#   name                = local.cdn_endpoint_name
-#   profile_name        = azurerm_cdn_profile.profile.name
-#   location            = var.location
-#   resource_group_name = var.resource_group_name
+resource "azurerm_cdn_frontdoor_origin_group" "origin_group" {
+  name                     = "${local.front_door_endpoint_name}-og"
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.profile.id
+  session_affinity_enabled = false
+  load_balancing_settings {
+    additional_latency_in_milliseconds = 0
+    sample_size                        = 16
+    successful_samples_required        = 3
+  }
+}
 
-#   origin {
-#     name      = "storage-origin"
-#     host_name = trim(replace(replace(azurerm_storage_account.static.primary_web_endpoint, "https://", ""), "http://", ""), "/")
-#   }
+resource "azurerm_cdn_frontdoor_origin" "storage" {
+  name                          = "storage-origin"
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.origin_group.id
+  enabled                       = true
+  host_name                     = trim(replace(replace(azurerm_storage_account.static.primary_web_endpoint, "https://", ""), "http://", ""), "/")
+  http_port                     = 80
+  https_port                    = 443
+  origin_host_header            = trim(replace(replace(azurerm_storage_account.static.primary_web_endpoint, "https://", ""), "http://", ""), "/")
+  priority                      = 1
+  weight                        = 1000
+}
 
-#   is_http_allowed  = false
-#   is_https_allowed = true
-#   # no geo_filter by default
-# }
+resource "azurerm_cdn_frontdoor_route" "route" {
+  name                          = "${local.front_door_endpoint_name}-route"
+  cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint.id
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.origin_group.id
+  supported_protocols           = ["Http", "Https"]
+  patterns_to_match             = ["/*"]
+  forwarding_protocol           = "HttpsOnly"
+  link_to_default_domain        = true
+  https_redirect_enabled        = true
+}
 
-# Note: creating a `azurerm_cdn_custom_domain` requires domain validation steps
-# which often need owners to add TXT records or CNAMEs to their DNS provider.
-# We create a dns CNAME mapping in the `dns` module and leave the custom domain
-# resource instantiation to operators after validation in many environments.
+resource "azurerm_cdn_frontdoor_endpoint" "endpoint" {
+  name                     = local.front_door_endpoint_name
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.profile.id
+}
 
-# output "primary_web_endpoint" {
-#   value = azurerm_storage_account.static.primary_web_endpoint
-# }
+# Note: For custom domains, create `azurerm_cdn_frontdoor_custom_domain` resource
+# and reference it in the route. This requires domain validation via TXT records
+# or CNAME delegation. DNS CNAME mapping is created in the `dns` module.
 
-# output "cdn_endpoint_hostname" {
-#   value = [for o in azurerm_cdn_endpoint.endpoint.origin : o.host_name][0]
-# }
+# Expose Front Door endpoint hostname
+output "front_door_endpoint_hostname" {
+  value = azurerm_cdn_frontdoor_endpoint.endpoint.host_name
+}
 
 # Expose a storage account name for function use (short-lived credentials not stored here)
 output "function_storage_account_name" {
