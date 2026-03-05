@@ -1,5 +1,7 @@
+import os
+import json
+from azure.data.tables import TableServiceClient
 import azure.functions as func
-import logging
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -14,20 +16,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     partition_key = "resume"
     row_key = "views"
 
-    # Try to fetch entity, create if not exists
     try:
         entity = table_client.get_entity(partition_key=partition_key, row_key=row_key)
         count = entity.get("Count", 0)
         entity["Count"] = count + 1
         table_client.update_entity(entity, mode="Replace")
     except Exception:
-        # First-time visitor
         entity = {"PartitionKey": partition_key, "RowKey": row_key, "Count": 1}
         table_client.create_entity(entity)
         count = 1
 
     return func.HttpResponse(
-        json.dumps({"count": count}),
+        json.dumps({"visitor_count": count}),
         status_code=200,
         mimetype="application/json"
     )
