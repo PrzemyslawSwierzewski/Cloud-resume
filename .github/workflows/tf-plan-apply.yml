@@ -7,7 +7,7 @@ on:
     paths-ignore:
       - 'http_trigger/**'
       - 'README.md'
-      - 'modules/static_site/index.html'
+      - 'modules/static_site/site/**'
       - '.github/workflows/deploy-to-function-app.yml'
       - '.github/workflows/deploy-static-website.yml'
   pull_request:
@@ -16,7 +16,7 @@ on:
     paths-ignore:
       - 'http_trigger/**'
       - 'README.md'
-      - 'modules/static_site/index.html'
+      - 'modules/static_site/site/**'
       - '.github/workflows/deploy-to-function-app.yml'
       - '.github/workflows/deploy-static-website.yml'
 

@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'modules/static_site/**'
+      - 'modules/static_site/site/**'
 
 jobs:
   deploy-static-site:
