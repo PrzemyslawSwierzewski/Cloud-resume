@@ -1,13 +1,15 @@
 import json
 import os
+import logging
 from azure.data.tables import TableServiceClient
-from azure.core.exceptions import ResourceNotFoundError
 import azure.functions as func
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 @app.route(route="http_trigger")
 def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info("HTTP trigger function started.")
+
     STORAGE_CONN_STRING = os.environ.get("STORAGE_CONN_STRING")
     if not STORAGE_CONN_STRING:
         return func.HttpResponse(
