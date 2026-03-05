@@ -27,7 +27,7 @@ jobs:
                 --account-name stresstatic \
                 --auth-mode key \
                 -d '$web' \
-                -s ./modules/static_site \
+                -s ./modules/static_site/site \
                 --overwrite
 
       - name: Purge CDN endpoint
