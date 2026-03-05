@@ -1,42 +1,45 @@
 import json
 import os
 import logging
-from azure.data.tables import TableServiceClient, TableTransactionError
+from azure.data.tables import TableServiceClient
 import azure.functions as func
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 @app.route(route="http_trigger")
 def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
+    logging.info("HTTP trigger function started.")
 
-    # Safe access to env variable
     STORAGE_CONN_STRING = os.environ.get("STORAGE_CONN_STRING")
     if not STORAGE_CONN_STRING:
-        logging.error("STORAGE_CONN_STRING is not set")
-        return func.HttpResponse(
-            "Server misconfiguration",
-            status_code=500
-        )
+        logging.error("STORAGE_CONN_STRING is not set!")
+        return func.HttpResponse("STORAGE_CONN_STRING is missing.", status_code=500)
+
+    logging.info("Environment variable STORAGE_CONN_STRING found.")
 
     table_name = "VisitorCounter"
     partition_key = "resume"
     row_key = "views"
 
     try:
+        logging.info("Connecting to TableServiceClient...")
         table_service = TableServiceClient.from_connection_string(STORAGE_CONN_STRING)
         table_client = table_service.get_table_client(table_name)
+        logging.info(f"Connected to table: {table_name}")
 
         try:
+            logging.info(f"Fetching entity PartitionKey={partition_key}, RowKey={row_key}")
             entity = table_client.get_entity(partition_key=partition_key, row_key=row_key)
             count = entity.get("Count", 0) + 1
             entity["Count"] = count
             table_client.update_entity(entity, mode="Replace")
-        except Exception:
-            # First-time visitor
+            logging.info(f"Entity updated successfully. New count: {count}")
+        except Exception as e:
+            logging.warning(f"Entity not found or error updating: {e}")
             count = 1
             entity = {"PartitionKey": partition_key, "RowKey": row_key, "Count": count}
             table_client.create_entity(entity)
+            logging.info("Entity created for the first time with count 1.")
 
         return func.HttpResponse(
             json.dumps({"visitor_count": count}),
@@ -45,8 +48,5 @@ def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
         )
 
     except Exception as e:
-        logging.error(f"Table access error: {e}")
-        return func.HttpResponse(
-            "Internal server error",
-            status_code=500
-        )
+        logging.error(f"Unexpected error: {e}", exc_info=True)
+        return func.HttpResponse(f"Internal server error: {e}", status_code=500)
