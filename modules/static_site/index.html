@@ -411,9 +411,14 @@
 
     stats: () => {
         return `
-    AKS Pods: [#####-----] 50%<br>
-    Terraform Runs: [########--] 80%
-    `;
+        <strong>Cloud Infrastructure Stats</strong><br><br>
+        <span style="color:#00ffff">AKS Cluster:</span> 3 nodes running, 1 app deployed<br>
+        <span style="color:#ffcc00">Terraform:</span> 12 modules applied, 95% success rate<br>
+        <span style="color:#ff0033">Function App:</span> 1 endpoint, ~1500 requests/month<br>
+        <span style="color:#33ff33">Storage Table:</span> 1 table storing <em>visitor counter</em><br>
+        <span style="color:#66ccff">CI/CD:</span> GitHub Actions pipeline running every push<br>
+        <span style="color:#ff66ff">Availability:</span> 99.95% uptime monitored via Azure Monitor
+        `;
     },
 
     github: `
