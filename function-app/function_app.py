@@ -2,6 +2,7 @@ import json
 import os
 import logging
 from azure.data.tables import TableServiceClient
+from azure.core.exceptions import ResourceNotFoundError
 import azure.functions as func
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
