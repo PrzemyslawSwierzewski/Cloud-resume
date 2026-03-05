@@ -15,7 +15,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     partition_key = "resume"
     row_key = "views"
-
+#deploy it!
     try:
         entity = table_client.get_entity(partition_key=partition_key, row_key=row_key)
         count = entity.get("Count", 0)

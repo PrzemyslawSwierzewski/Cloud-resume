@@ -7,12 +7,14 @@ on:
     paths-ignore:
       - 'function-app/**'
       - 'README.md'
+      - 'modules/static_site/index.html'
   pull_request:
     branches:
     - main
     paths-ignore:
       - 'function-app/**'
       - 'README.md'
+      - 'modules/static_site/index.html'
 
 permissions:
   id-token: write
