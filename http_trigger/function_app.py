@@ -53,7 +53,7 @@ def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
         status_code=200,
         mimetype="application/json"
     )
-# ---------------- visitor_read route -----------------
+# ---------------- visitor_read route ----------------
 @app.route(route="visitor_read")
 def visitor_read(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Visitor read function started.")
