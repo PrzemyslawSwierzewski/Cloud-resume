@@ -1,12 +1,15 @@
-import os
 import json
+import os
 from azure.data.tables import TableServiceClient
 import azure.functions as func
+import logging
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 @app.route(route="http_trigger")
-def main(req: func.HttpRequest) -> func.HttpResponse:
+def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Python HTTP trigger function processed a request.')
+
     STORAGE_CONN_STRING = os.environ["STORAGE_CONN_STRING"]
     TABLE_NAME = "VisitorCounter"
 
