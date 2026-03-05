@@ -46,7 +46,6 @@ def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
             break
 
         except ResourceModifiedError:
-            # Retry if another request updated at same time
             continue
 
     return func.HttpResponse(
