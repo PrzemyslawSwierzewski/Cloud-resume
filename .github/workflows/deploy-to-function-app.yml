@@ -3,14 +3,14 @@ name: Deploy Python project to Azure Function App
 on:
   push:
     branches: ["main"]
-    paths: ["function-app/**"]
+    paths: ["http-trigger/**"]
   pull_request:
     paths:
-      - "function-app/**"
+      - "http-trigger/**"
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'func-res'
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'function-app'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'http-trigger'
   PYTHON_VERSION: '3.10'
 
 jobs:

@@ -129,6 +129,47 @@
             background: #00ff66;
             color: #000;
         }
+        #cli-terminal {
+            background: rgba(0,0,0,0.85);
+            border: 1px solid #00ff66;
+            padding: 20px;
+            height: 320px;
+            overflow-y: auto;
+        }
+
+        #cli-output {
+            margin-bottom: 10px;
+        }
+
+        #cli-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #00ff66;
+            font-family: 'Share Tech Mono', monospace;
+            width: 80%;
+        }
+
+        .prompt {
+            color: #00ff66;
+        }
+
+        .cmd {
+            color: #00ffff;
+        }
+
+        .error {
+            color: #ff0033;
+        }
+
+        a {
+            color: #00ffff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -211,8 +252,8 @@
     <div class="terminal-box" id="cli-terminal">
         <div id="cli-output"></div>
         <div>
-            <span>&gt;</span>
-            <input type="text" id="cli-input" style="background: transparent; border: none; color: #00ff66; font-family: 'Share Tech Mono'; width: 90%;" autofocus />
+            <span class="prompt">visitor@azure-portfolio:~$</span>
+            <input type="text" id="cli-input" autofocus />
         </div>
     </div>
     <div class="section">
@@ -284,59 +325,143 @@
 
     window.onload = fetchVisitorCount;
 
-    // CLI simulation
+    // CLI Simulation
     const cliOutput = document.getElementById('cli-output');
     const cliInput = document.getElementById('cli-input');
 
-    const commands = {
-        help: "Available commands:<br>help - show commands<br>projects - show flagship projects<br>skills - show core skills<br>visitor - show visitor count<br>stats - show deployment stats<br>linkedin - LinkedIn profile<br>clear - clear terminal output",
-        
-        clear: () => {
-            cliOutput.innerHTML = '';
-            return '';
-        },
+    function typeText(text, speed = 10) {
+        return new Promise(resolve => {
+            let i = 0;
+            let line = document.createElement("div");
+            cliOutput.appendChild(line);
 
-        projects: "> <a href='https://github.com/PrzemyslawSwierzewski/cloud-native-app' target='_blank'>Cloud-Native Full-Stack App on AKS</a><br>> <a href='https://github.com/PrzemyslawSwierzewski/tarot-cloud' target='_blank'>Tarot Cloud - Azure Infrastructure</a>",
-
-        skills: "- <span style='color:#ff0033'>Azure Landing Zones</span><br>- <span style='color:#ffcc00'>Terraform</span><br>- <span style='color:#00ffff'>Kubernetes / AKS / Helm</span><br>- <span style='color:#ff66ff'>Networking</span><br>- <span style='color:#ff9900'>Governance / RBAC</span><br>- <span style='color:#33ff33'>CI/CD</span><br>- <span style='color:#66ccff'>Observability</span>",
-
-        visitor: async () => {
-            try {
-                const res = await fetch("https://func-res.azurewebsites.net/api/http_trigger", {credentials: 'include'});
-                if (!res.ok) throw new Error(res.status);
-                const data = await res.json();
-                return `Current visitor count: ${data.visitor_count ?? 0}`;
-            } catch {
-                return "Visitor count unavailable";
+            function typing() {
+                if (i < text.length) {
+                    line.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typing, speed);
+                } else {
+                    resolve();
+                }
             }
-        },
+            typing();
+        });
+    }
 
-        stats: () => {
-            const pods = "[#####-----] 50%";
-            const terraform = "[########--] 80%";
-            return `AKS Pods: ${pods}<br>Terraform Runs: ${terraform}`;
-        },
+    const commands = {
 
-        linkedin: "<a href='https://www.linkedin.com/in/przemysław-świerzewski-124144253' target='_blank'>LinkedIn Profile</a>",
+    help: `
+    <span class="cmd">help</span> - show commands<br>
+    <span class="cmd">about</span> - about me<br>
+    <span class="cmd">projects</span> - flagship projects<br>
+    <span class="cmd">skills</span> - core skills<br>
+    <span class="cmd">visitor</span> - show visitor count<br>
+    <span class="cmd">stats</span> - deployment stats<br>
+    <span class="cmd">github</span> - github profile<br>
+    <span class="cmd">linkedin</span> - linkedin profile<br>
+    <span class="cmd">contact</span> - contact info<br>
+    <span class="cmd">infra</span> - show AKS architecture<br>
+    <span class="cmd">clear</span> - clear terminal
+    `,
 
-        infra: () => "<img src='images/aks-diagram.png' style='width:100%; border:1px solid #00ff66; margin-top:10px;' />"
+    about: `
+    Azure Platform Engineer building scalable cloud infrastructure.<br>
+    Specialized in Azure Landing Zones, Terraform, AKS and platform engineering.
+    `,
+
+    projects: `
+    &gt; <a href="https://github.com/PrzemyslawSwierzewski/Cloud-Native-App-Deployment-on-AKS" target="_blank">
+    Cloud-Native Full Stack App on AKS
+    </a><br>
+
+    &gt; <a href="https://github.com/PrzemyslawSwierzewski/tarot-cloud" target="_blank">
+    Tarot Cloud - Azure Infrastructure
+    </a>
+    `,
+
+    skills: `
+    - <span style="color:#ff0033">Azure Landing Zones</span><br>
+    - <span style="color:#ffcc00">Terraform</span><br>
+    - <span style="color:#00ffff">Kubernetes / AKS</span><br>
+    - <span style="color:#ff66ff">Networking</span><br>
+    - <span style="color:#ff9900">RBAC / Governance</span><br>
+    - <span style="color:#33ff33">CI/CD</span><br>
+    - <span style="color:#66ccff">Observability</span>
+    `,
+
+    visitor: async () => {
+        try {
+            const res = await fetch("https://func-res.azurewebsites.net/api/visitor_read");
+            const data = await res.json();
+            return `Current visitor count: ${data.visitor_count ?? 0}`;
+        } catch {
+            return "Visitor count unavailable";
+        }
+    },
+
+    stats: () => {
+        return `
+    AKS Pods: [#####-----] 50%<br>
+    Terraform Runs: [########--] 80%
+    `;
+    },
+
+    github: `
+    <a href="https://github.com/PrzemyslawSwierzewski" target="_blank">
+    GitHub Profile
+    </a>
+    `,
+
+    linkedin: `
+    <a href="https://www.linkedin.com/in/przemysław-świerzewski-124144253" target="_blank">
+    LinkedIn Profile
+    </a>
+    `,
+
+    contact: `
+    LinkedIn: <a href="https://www.linkedin.com/in/przemysław-świerzewski-124144253" target="_blank">Open</a><br>
+    GitHub: <a href="https://github.com/PrzemyslawSwierzewski" target="_blank">Open</a>
+    `,
+
+    infra: () => `
+    <img src="images/aks-diagram.png" style="width:100%; border:1px solid #00ff66; margin-top:10px;">
+    `,
+
+    clear: () => {
+        cliOutput.innerHTML = '';
+        return '';
+    }
+
     };
 
     cliInput.addEventListener('keydown', async (e) => {
-        if (e.key === 'Enter') {
-            let cmd = cliInput.value.trim().toLowerCase();
-            cliOutput.innerHTML += `&gt; ${cmd}<br>`;
-            cliInput.value = '';
 
-            if (commands[cmd]) {
-                let output = typeof commands[cmd] === 'function' ? await commands[cmd]() : commands[cmd];
-                cliOutput.innerHTML += `${output}<br>`;
-            } else {
-                cliOutput.innerHTML += `Command not found. Type 'help' for list of commands.<br>`;
-            }
+    if (e.key === 'Enter') {
 
-            cliOutput.scrollTop = cliOutput.scrollHeight; // auto-scroll
-        }
+    let cmd = cliInput.value.trim().toLowerCase();
+
+    cliOutput.innerHTML += `<div><span class="prompt">visitor@azure-portfolio:~$</span> ${cmd}</div>`;
+
+    cliInput.value = '';
+
+    if (commands[cmd]) {
+
+    let output = typeof commands[cmd] === 'function'
+    ? await commands[cmd]()
+    : commands[cmd];
+
+    cliOutput.innerHTML += `<div>${output}</div>`;
+
+    } else {
+
+    cliOutput.innerHTML += `<div class="error">Command not found. Type 'help'.</div>`;
+
+    }
+
+    cliOutput.scrollTop = cliOutput.scrollHeight;
+
+    }
+
     });
 </script>
 
