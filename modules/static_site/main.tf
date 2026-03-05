@@ -49,3 +49,7 @@ output "function_storage_account_name" {
 output "storage_account_name_primary_connection_string" {
   value = azurerm_storage_account.static.primary_connection_string
 }
+
+output "storage_account_access_key" {
+  value = azurerm_storage_account.static.primary_access_key
+}
