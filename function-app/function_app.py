@@ -17,7 +17,7 @@ def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
 
     logging.info("Environment variable STORAGE_CONN_STRING found.")
 
-    table_name = "VisitorCounter"
+    table_name = "visitors"
     partition_key = "resume"
     row_key = "views"
 
