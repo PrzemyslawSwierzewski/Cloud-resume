@@ -25,7 +25,8 @@ resource "azurerm_linux_function_app" "function" {
     }
 
     cors {
-      allowed_origins = [var.static_website_primary_endpoint]
+      allowed_origins = [substr(var.static_website_primary_endpoint, 0, length(var.static_website_primary_endpoint) - 1)]
+      support_credentials = true
     }
   }
 
