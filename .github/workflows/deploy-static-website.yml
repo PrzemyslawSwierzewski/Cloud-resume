@@ -1,33 +1,45 @@
-name: Blob storage website CI
+name: Blob Storage Website CI
 
 on:
   push:
     branches: [ main ]
     paths:
-      - 'modules/static_site/index.html'
+      - 'modules/static_site/**'
 
 jobs:
-  build:
+  deploy-static-site:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: azure/login@v2
-      with:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
           creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }}
 
-    - name: Upload to blob storage
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-            az storage blob upload-batch --account-name stresstatic --auth-mode key -d '$web' -s .
-    - name: Purge CDN endpoint
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-           az cdn endpoint purge --content-paths  "/*" --profile-name "CDN_PROFILE_NAME" --name "CDN_ENDPOINT" --resource-group "RESOURCE_GROUP"
+      - name: Upload static site files
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            # Upload all files in the static_site folder only
+            az storage blob upload-batch \
+              --account-name stresstatic \
+              --container-name '$web' \
+              --source 'modules/static_site' \
+              --pattern 'index.html' \
+              --auth-mode key
 
-  # Azure logout
-    - name: logout
-      run: |
-            az logout
-      if: always()
+      - name: Purge CDN endpoint
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az cdn endpoint purge \
+              --content-paths "/*" \
+              --profile-name "CDN_PROFILE_NAME" \
+              --name "CDN_ENDPOINT" \
+              --resource-group "RESOURCE_GROUP"
+
+      - name: Azure Logout
+        if: always()
+        run: az logout
