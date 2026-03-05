@@ -8,6 +8,8 @@ on:
       - 'function-app/**'
       - 'README.md'
       - 'modules/static_site/index.html'
+      - '.github/workflows/deploy-to-function-app.yml'
+      - '.github/workflows/deploy-static-website.yml'
   pull_request:
     branches:
     - main
@@ -15,6 +17,8 @@ on:
       - 'function-app/**'
       - 'README.md'
       - 'modules/static_site/index.html'
+      - '.github/workflows/deploy-to-function-app.yml'
+      - '.github/workflows/deploy-static-website.yml'
 
 permissions:
   id-token: write

@@ -24,11 +24,11 @@ jobs:
           inlineScript: |
             # Upload all files in the static_site folder only
             az storage blob upload-batch \
-              --account-name stresstatic \
-              --container-name '$web' \
-              --source 'modules/static_site' \
-              --pattern 'index.html' \
-              --auth-mode key
+                --account-name stresstatic \
+                --auth-mode key \
+                -d '$web' \
+                -s ./modules/static_site \
+                --pattern index.html
 
       - name: Purge CDN endpoint
         uses: azure/CLI@v1
