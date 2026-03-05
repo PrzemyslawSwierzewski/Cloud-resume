@@ -28,7 +28,7 @@ jobs:
                 --auth-mode key \
                 -d '$web' \
                 -s ./modules/static_site \
-                --pattern index.html; *.png; *.jpg \
+                --pattern index.html;*.png;*.jpg \
                 --overwrite
 
       - name: Purge CDN endpoint
