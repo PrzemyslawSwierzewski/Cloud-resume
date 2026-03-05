@@ -23,10 +23,17 @@ resource "azurerm_linux_function_app" "function" {
     application_stack {
       python_version = "3.12"
     }
+
+    cors {
+      allowed_origins = [var.static_website_primary_endpoint]
+    }
   }
 
   app_settings = {
-    "STORAGE_CONN_STRING" = var.storage_account_name_primary_connection_string
+    "AzureWebJobsStorage"      = var.storage_account_name_primary_connection_string
+    "FUNCTIONS_WORKER_RUNTIME" = "python"
+    "STORAGE_CONN_STRING"      = var.storage_account_name_primary_connection_string
+    "WEBSITE_RUN_FROM_PACKAGE" = "1"
   }
 
   identity {

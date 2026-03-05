@@ -26,4 +26,5 @@ module "function" {
   tags                                           = var.tags
   storage_account_name_primary_connection_string = module.static_site.storage_account_name_primary_connection_string
   storage_account_name                           = module.static_site.function_storage_account_name
+  static_website_primary_endpoint                = module.static_site.primary_web_endpoint
 }
