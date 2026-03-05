@@ -47,7 +47,7 @@ def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
 
         except ResourceModifiedError:
             continue
-#deploy?
+
     return func.HttpResponse(
         json.dumps({"visitor_count": count}),
         status_code=200,
