@@ -41,3 +41,22 @@ def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
 
     except Exception as e:
         return func.HttpResponse(f"Internal server error: {e}", status_code=500)
+
+@app.route(route="visitor_read", auth_level=func.AuthLevel.ANONYMOUS)
+def visitor_read(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Python HTTP trigger function processed a request.')
+
+    STORAGE_CONN_STRING = os.environ["STORAGE_CONN_STRING"]
+    table_service = TableServiceClient.from_connection_string(STORAGE_CONN_STRING)
+    table_client = table_service.get_table_client("visitors")
+
+    partition_key = "resume"
+    row_key = "views"
+
+    try:
+        entity = table_client.get_entity(partition_key=partition_key, row_key=row_key)
+        count = entity.get("Count", 0)
+    except Exception:
+        count = 0
+
+    return func.HttpResponse(json.dumps({"visitor_count": count}), status_code=200, mimetype="application/json")
