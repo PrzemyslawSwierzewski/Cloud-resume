@@ -1,7 +1,7 @@
 import json
 import os
 import logging
-from azure.data.tables import TableServiceClient, UpdateMode
+from azure.data.tables import TableServiceClient
 from azure.core.exceptions import ResourceNotFoundError
 import azure.functions as func
 
@@ -13,7 +13,10 @@ def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
 
     STORAGE_CONN_STRING = os.environ.get("STORAGE_CONN_STRING")
     if not STORAGE_CONN_STRING:
-        return func.HttpResponse("STORAGE_CONN_STRING is missing.", status_code=500)
+        return func.HttpResponse(
+            "STORAGE_CONN_STRING is missing.",
+            status_code=500
+        )
 
     table_name = "visitors"
     partition_key = "resume"
@@ -23,11 +26,12 @@ def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
         table_service = TableServiceClient.from_connection_string(STORAGE_CONN_STRING)
         table_client = table_service.get_table_client(table_name)
 
+        # Try to fetch the entity; create it if it does not exist
         try:
             entity = table_client.get_entity(partition_key=partition_key, row_key=row_key)
             count = entity.get("Count", 0) + 1
             entity["Count"] = count
-            table_client.update_entity(entity, mode=UpdateMode.REPLACE)
+            table_client.update_entity(entity, mode="Replace")
         except ResourceNotFoundError:
             count = 1
             entity = {"PartitionKey": partition_key, "RowKey": row_key, "Count": count}
@@ -40,4 +44,7 @@ def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
         )
 
     except Exception as e:
-        return func.HttpResponse(f"Internal server error: {e}", status_code=500)
+        return func.HttpResponse(
+            f"Internal server error: {e}",
+            status_code=500
+        )
