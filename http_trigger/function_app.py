@@ -41,7 +41,7 @@ def http_trigger(req: func.HttpRequest) -> func.HttpResponse:
 
     except Exception as e:
         return func.HttpResponse(f"Internal server error: {e}", status_code=500)
-    
+    #
 @app.route(route="visitor_read")
 def visitor_read(req: func.HttpRequest) -> func.HttpResponse:
     STORAGE_CONN_STRING = os.environ["STORAGE_CONN_STRING"]
