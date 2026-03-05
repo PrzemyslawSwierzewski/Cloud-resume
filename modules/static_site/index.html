@@ -211,7 +211,14 @@
     <div class="terminal-box" id="cli-terminal">
         <div id="cli-output"></div>
         <div>
-            <span>&gt;</span> <input type="text" id="cli-input" style="background: transparent; border: none; color: #00ff66; font-family: 'Share Tech Mono'; width: 90%;" autofocus />
+            <span>&gt;</span>
+            <input type="text" id="cli-input" style="background: transparent; border: none; color: #00ff66; font-family: 'Share Tech Mono'; width: 90%;" autofocus />
+        </div>
+    </div>
+    <div class="section">
+        <h2>Visitor Counter</h2>
+        <div class="terminal-box">
+            Connections logged: <span id="counter">0</span>
         </div>
     </div>
 </div>
@@ -282,9 +289,17 @@
     const cliInput = document.getElementById('cli-input');
 
     const commands = {
-        help: "Available commands: help, projects, skills, visitor, linkedin",
-        projects: "> Cloud-Native Full-Stack App on AKS\n> Tarot Cloud - Azure Infrastructure with Terraform",
-        skills: "- Azure Landing Zones\n- Terraform\n- Kubernetes / AKS\n- Networking\n- Governance\n- CI/CD\n- Observability",
+        help: "Available commands:<br>help - show commands<br>projects - show flagship projects<br>skills - show core skills<br>visitor - show visitor count<br>stats - show deployment stats<br>linkedin - LinkedIn profile<br>clear - clear terminal output",
+        
+        clear: () => {
+            cliOutput.innerHTML = '';
+            return '';
+        },
+
+        projects: "> <a href='https://github.com/PrzemyslawSwierzewski/cloud-native-app' target='_blank'>Cloud-Native Full-Stack App on AKS</a><br>> <a href='https://github.com/PrzemyslawSwierzewski/tarot-cloud' target='_blank'>Tarot Cloud - Azure Infrastructure</a>",
+
+        skills: "- <span style='color:#ff0033'>Azure Landing Zones</span><br>- <span style='color:#ffcc00'>Terraform</span><br>- <span style='color:#00ffff'>Kubernetes / AKS / Helm</span><br>- <span style='color:#ff66ff'>Networking</span><br>- <span style='color:#ff9900'>Governance / RBAC</span><br>- <span style='color:#33ff33'>CI/CD</span><br>- <span style='color:#66ccff'>Observability</span>",
+
         visitor: async () => {
             try {
                 const res = await fetch("https://func-res.azurewebsites.net/api/http_trigger", {credentials: 'include'});
@@ -295,7 +310,16 @@
                 return "Visitor count unavailable";
             }
         },
-        linkedin: "https://www.linkedin.com/in/przemysław-świerzewski-124144253"
+
+        stats: () => {
+            const pods = "[#####-----] 50%";
+            const terraform = "[########--] 80%";
+            return `AKS Pods: ${pods}<br>Terraform Runs: ${terraform}`;
+        },
+
+        linkedin: "<a href='https://www.linkedin.com/in/przemysław-świerzewski-124144253' target='_blank'>LinkedIn Profile</a>",
+
+        infra: () => "<img src='images/aks-diagram.png' style='width:100%; border:1px solid #00ff66; margin-top:10px;' />"
     };
 
     cliInput.addEventListener('keydown', async (e) => {
@@ -303,10 +327,10 @@
             let cmd = cliInput.value.trim().toLowerCase();
             cliOutput.innerHTML += `&gt; ${cmd}<br>`;
             cliInput.value = '';
-            
+
             if (commands[cmd]) {
                 let output = typeof commands[cmd] === 'function' ? await commands[cmd]() : commands[cmd];
-                cliOutput.innerHTML += `${output.replace(/\n/g,'<br>')}<br>`;
+                cliOutput.innerHTML += `${output}<br>`;
             } else {
                 cliOutput.innerHTML += `Command not found. Type 'help' for list of commands.<br>`;
             }
