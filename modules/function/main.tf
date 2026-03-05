@@ -21,7 +21,7 @@ resource "azurerm_linux_function_app" "function" {
 
   site_config {
     application_stack {
-      python_version = "3.12"
+      python_version = "3.10"
     }
 
     cors {
@@ -30,10 +30,11 @@ resource "azurerm_linux_function_app" "function" {
   }
 
   app_settings = {
-    "AzureWebJobsStorage"      = var.storage_account_name_primary_connection_string
-    "FUNCTIONS_WORKER_RUNTIME" = "python"
-    "STORAGE_CONN_STRING"      = var.storage_account_name_primary_connection_string
-    "WEBSITE_RUN_FROM_PACKAGE" = "1"
+    "AzureWebJobsStorage"        = var.storage_account_name_primary_connection_string
+    "FUNCTIONS_WORKER_RUNTIME"   = "python"
+    "FUNCTIONS_EXTENSION_VERSION" = "~4"
+    "STORAGE_CONN_STRING"        = var.storage_account_name_primary_connection_string
+    "WEBSITE_RUN_FROM_PACKAGE"   = "1"
   }
 
   identity {
