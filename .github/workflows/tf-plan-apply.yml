@@ -5,7 +5,7 @@ on:
     branches:
     - main
     paths-ignore:
-      - 'http-trigger/**'
+      - 'http_trigger/**'
       - 'README.md'
       - 'modules/static_site/index.html'
       - '.github/workflows/deploy-to-function-app.yml'
@@ -14,7 +14,7 @@ on:
     branches:
     - main
     paths-ignore:
-      - 'http-trigger/**'
+      - 'http_trigger/**'
       - 'README.md'
       - 'modules/static_site/index.html'
       - '.github/workflows/deploy-to-function-app.yml'
