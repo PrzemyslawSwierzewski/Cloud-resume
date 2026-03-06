@@ -55,7 +55,7 @@ cloud-resume/
 ├── modules/                         # Terraform modules
 │   ├── function
 │   ├── static_site
-│       └── site      # Code for the static website
+│       └── site                     # Code for the static website
 │
 ├── main.tf                          # Main Terraform configuration
 ├── variables.tf                     # Terraform variables
