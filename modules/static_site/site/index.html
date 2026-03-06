@@ -259,7 +259,12 @@
         <div id="cli-output"></div>
         <div>
             <span class="prompt">visitor@azure-portfolio:~$</span>
-            <input type="text" id="cli-input" placeholder="Type 'help' to see available commands..." autofocus />
+            <input 
+                type="text" 
+                id="cli-input" 
+                placeholder="Type 'help' to see available commands..." 
+                autofocus 
+            />
         </div>
     </div>
     <div class="section">
@@ -334,6 +339,19 @@
     // CLI Simulation
     const cliOutput = document.getElementById('cli-output');
     const cliInput = document.getElementById('cli-input');
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const output = document.getElementById("cli-output");
+
+        const banner = `
+    Welcome to the Azure Portfolio CLI
+    -----------------------------------
+    Type "help" to see available commands.
+
+    `;
+
+        output.textContent = banner;
+    });
 
     function typeText(text, speed = 10) {
         return new Promise(resolve => {
