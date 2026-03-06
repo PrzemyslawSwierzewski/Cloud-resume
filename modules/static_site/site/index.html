@@ -340,19 +340,6 @@
     const cliOutput = document.getElementById('cli-output');
     const cliInput = document.getElementById('cli-input');
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const output = document.getElementById("cli-output");
-
-        const banner = `
-    Welcome to the Azure Portfolio CLI<br>
-    -----------------------------------<br>
-    Type "help" to see available commands.
-
-    `;
-
-        output.textContent = banner;
-    });
-
     function typeText(text, speed = 10) {
         return new Promise(resolve => {
             let i = 0;
